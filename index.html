@@ -1733,6 +1733,7 @@ renderWishes(defaultWishes);
 
   fetch("https://script.google.com/macros/s/AKfycbzGh3_kCSfGxEu6PAZj3Jev5KXleNzw2r2pQay2F9LjK1JFbB527Wc6mfhiw1D8VTyq5g/exec", {
     method: "POST",
+    mode: "no-cors",
     body: formData
   })
   .then(() => {
