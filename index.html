@@ -1763,7 +1763,7 @@ function sendRSVP(attending) {
   formData.append("guests", guests);
   formData.append("attending", attending ? "Yes" : "No");
 
-  fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzZyijZOa-U2InLqoPr-Hbm2yFCMvYUds6BSsDqokBAeCFkvtK-jraWD6k5RnoWZKL2/exec", {
     method: "POST",
     mode: "no-cors",
     body: formData
