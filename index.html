@@ -1436,6 +1436,11 @@
       </div>
 
       <div class="wish-cards" id="wish-list"></div>
+      <div style="text-align:center; margin-top:1.5rem;">
+        <button id="load-more-btn" onclick="loadMoreWishes()" style="display:none; background:transparent; border:1.5px solid var(--gold); color:var(--gold); padding:0.6rem 2rem; font-family:'Cormorant Garamond',serif; font-size:1rem; border-radius:30px; cursor:pointer; letter-spacing:0.05em;">
+          See More Wishes 💛
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1702,6 +1707,9 @@ const defaultWishes = [
   { name: 'Irfan', relation: 'Friend', text: 'Mabrook to my dear friend! May your home be filled with joy and your hearts with gratitude. JazakAllahu Khairan.' },
 ];
 
+let allWishes = [];
+let shownCount = 6;
+
 function renderWishes(wishes) {
   const list = document.getElementById('wish-list');
   list.innerHTML = wishes.map(w => `
@@ -1713,7 +1721,41 @@ function renderWishes(wishes) {
   `).join('');
 }
 
-renderWishes(defaultWishes);
+function loadMoreWishes() {
+  shownCount += 6;
+  renderWishes(allWishes.slice(0, shownCount));
+  if (shownCount >= allWishes.length) {
+    document.getElementById('load-more-btn').style.display = 'none';
+  }
+}
+
+function loadWishes() {
+  fetch("https://script.google.com/macros/s/AKfycbzGh3_kCSfGxEu6PAZj3Jev5KXleNzw2r2pQay2F9LjK1JFbB527Wc6mfhiw1D8VTyq5g/exec")
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.length > 0) {
+        allWishes = data.reverse().map(w => ({
+          name: w.name,
+          relation: w.relation,
+          text: w.wish
+        }));
+        shownCount = 6;
+        renderWishes(allWishes.slice(0, shownCount));
+        const btn = document.getElementById('load-more-btn');
+        btn.style.display = allWishes.length > 6 ? 'inline-block' : 'none';
+      } else {
+        allWishes = defaultWishes;
+        renderWishes(defaultWishes);
+        document.getElementById('load-more-btn').style.display = 'none';
+      }
+    })
+    .catch(() => {
+      renderWishes(defaultWishes);
+      document.getElementById('load-more-btn').style.display = 'none';
+    });
+}
+
+loadWishes();
 
 
  function submitWish() {
@@ -1737,8 +1779,7 @@ renderWishes(defaultWishes);
     body: formData
   })
   .then(() => {
-    defaultWishes.unshift({ name, relation, text });
-    renderWishes(defaultWishes);
+    loadWishes();
 
     document.getElementById('wish-name').value = '';
     document.getElementById('wish-text').value = '';
